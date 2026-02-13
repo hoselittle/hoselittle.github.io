@@ -1,0 +1,620 @@
+/* --- 1. Global Reset & Fonts --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Nunito', sans-serif;
+    overflow: hidden;
+    
+    /* Wooden Table Texture created with CSS gradients */
+    background-color: #5d4037;
+    background-image: 
+        repeating-linear-gradient(90deg, transparent 0, transparent 40px, rgba(0,0,0,0.1) 40px, rgba(0,0,0,0.1) 42px),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 100px);
+    
+    /* A Vignette (dark corners) to focus eyes on the center */
+    box-shadow: inset 0 0 150px rgba(0,0,0,0.9);
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- 2. The Book Container --- */
+.book {
+    position: relative;
+    width: 350px; /* Mobile friendly width */
+    height: 500px;
+    perspective: 1500px; /* Determines 3D depth */
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3); /* Shadow on the table */
+    border-radius: 10px;
+    background-color: #5c2828; /* Dark spine color behind pages */
+}
+
+/* --- 3. The Paper Pages --- */
+.paper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform-origin: left; /* Hinge on the left */
+    transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1); /* Smooth flip */
+    transform-style: preserve-3d;
+    border-radius: 5px 15px 15px 5px; /* Rounder edges on right side */
+    cursor: pointer;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+/* Hover effect to hint "click me" */
+.paper:hover {
+    transform: rotateY(-5deg); 
+}
+.paper.flipped:hover {
+    transform: rotateY(-175deg);
+}
+
+/* --- 4. Front & Back Styling --- */
+.front, .back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    
+    /* Paper Texture Effect */
+    background-color: #fffdf7; /* Off-white paper */
+    background-image: 
+        linear-gradient(to right, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 10%), /* Spine shadow */
+        linear-gradient(to left, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0) 5%); /* Edge shadow */
+    border: 1px solid #e0dcd3;
+}
+
+.front {
+    z-index: 2;
+}
+
+.back {
+    z-index: 1;
+    transform: rotateY(180deg);
+    border-right: none;
+    border-left: 1px solid #e0dcd3;
+    /* Spine shadow on the other side for the back */
+    background-image: 
+        linear-gradient(to left, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 10%);
+}
+
+/* --- 5. Polaroid Photo Effect --- */
+.photo-frame {
+    background: white;
+    padding: 12px 12px 40px 12px; /* Thick bottom for that Polaroid look */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: rotate(-2deg); /* Slight messy rotation */
+    transition: transform 0.3s;
+    width: 90%;
+}
+
+.photo-frame:hover {
+    transform: rotate(0deg) scale(1.02);
+}
+
+.photo-frame img, .photo-frame video {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border: 1px solid #eee;
+    display: block;
+}
+
+
+/* --- 6. Typography & Decorations --- */
+h1 {
+    font-family: 'Dancing Script', cursive;
+    color: #c9184a;
+    font-size: 3rem;
+    text-shadow: 2px 2px 0px rgba(255,200,200,0.5);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+p {
+    color: #590d22;
+    font-size: 1.1rem;
+    text-align: center;
+    margin-top: 15px;
+    line-height: 1.5;
+}
+
+.caption {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.6rem;
+    color: #555;
+    margin-top: 5px;
+    transform: rotate(-2deg);
+}
+
+/* "Open Me" Hint arrow */
+.hint-text {
+    position: absolute;
+    bottom: 20px;
+    font-size: 0.9rem;
+    color: #999;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-5px);}
+    60% {transform: translateY(-3px);}
+}
+
+/* --- 7. Buttons --- */
+.music-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    color: #d00000;
+    border: 2px solid #d00000;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+    z-index: 100;
+}
+
+.music-btn:hover {
+    background: #d00000;
+    color: white;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 600px) {
+    .book {
+        width: 90vw;
+        height: 65vh;
+    }
+    h1 { font-size: 2.5rem; }
+}
+/* State: Flipped Page */
+.flipped {
+    transform: rotateY(-180deg);
+}
+
+/* --- Special Cover Styling (Page 1 Only) --- */
+
+/* 1. The Leather Texture */
+#p1 .front {
+    background: #800020; /* Deep Burgundy / Wine Red */
+    /* This gradient creates a subtle "leather grain" effect */
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.05) 0px,
+        rgba(0, 0, 0, 0.05) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    border: 2px solid #5c0016;
+    box-shadow: inset 5px 0 10px rgba(0,0,0,0.3); /* Shadow near spine */
+    color: white; /* Default text color */
+}
+
+/* 2. Gold Foil Title */
+#p1 .front h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 3.5rem;
+    color: #ffd700; /* Gold color */
+    
+    /* This creates the shiny metallic effect */
+    background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent; /* Hides the flat color so gradient shows */
+    
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Embossed shadow */
+    margin-bottom: 10px;
+    border-bottom: 2px solid #b38728; /* Gold underline */
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+/* 3. Decorative Frame Border */
+#f1 {
+    border: 2px solid rgba(255, 215, 0, 0.3); /* Faint gold border */
+    padding: 30px;
+    width: 85%;
+    height: 85%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
+/* 4. Subtitle Style */
+#p1 .front p {
+    font-family: 'Nunito', sans-serif;
+    color: #e0e0e0; /* Light silver/grey */
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* 5. The "Open" Hint */
+.hint-text {
+    margin-top: 40px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Candle Positioning */
+.candle-container {
+    position: absolute;
+    bottom: 10%; /* Adjusts vertical position */
+    left: 10%;   /* Adjusts horizontal position */
+    z-index: 5;  /* Above the table, below the UI */
+}
+
+.wax {
+    width: 60px;
+    height: 120px;
+    background: linear-gradient(#ffebee, #ffcdd2); /* Pinkish wax */
+    border-radius: 5px;
+    box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.wick {
+    width: 4px;
+    height: 15px;
+    background: #3e2723;
+    margin: 0 auto;
+    position: relative;
+    top: 0px;
+}
+
+.flame {
+    width: 15px;
+    height: 30px;
+    background: #ffcc00;
+    border-radius: 50% 50% 20% 20%;
+    margin: 0 auto;
+    position: relative;
+    top: -1px;
+    box-shadow: 0 0 20px #ffcc00, 0 0 60px #ff6600; /* The Glow */
+    animation: flicker 0.1s infinite alternate; /* The flickering magic */
+    transform-origin: bottom center;
+}
+
+@keyframes flicker {
+    0% { transform: scale(1) rotate(-2deg); opacity: 0.9; }
+    100% { transform: scale(1.1) rotate(2deg); opacity: 1; }
+}
+
+/* --- Scattered Photos (Fixed Positions) --- */
+
+.scattered-photo {
+    position: absolute;
+    padding: 10px 10px 30px 10px;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    transition: transform 0.3s ease;
+    z-index: 1; /* Lowest level on the desk */
+}
+
+.scattered-photo img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+    border: 1px solid #ddd;
+}
+
+/* Position for Photo 1: TOP LEFT */
+.p1 {
+    top: 5%;
+    left: 5%;
+    transform: rotate(-15deg);
+}
+
+/* Position for Photo 2: TOP RIGHT (Moved away from envelope) */
+.p2 {
+    top: 5%;
+    right: 5%;
+    transform: rotate(10deg);
+}
+
+/* Interaction: Pick them up */
+.scattered-photo:hover {
+    z-index: 20; /* Bring to top, but still below the envelope (9999) */
+    transform: scale(1.2) rotate(0deg);
+    cursor: pointer;
+    box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+}
+
+/* --- Secret Letter Styling (Geometric Fix) --- */
+
+.envelope-wrapper {
+    position: absolute;
+    bottom: 5%;
+    right: 10%;
+    transform: rotate(10deg);
+    cursor: pointer;
+    z-index: 9999;
+    transition: transform 0.3s;
+}
+
+.envelope-wrapper:hover {
+    transform: rotate(0deg) scale(1.05);
+}
+
+.envelope {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    background: #c0392b; /* The "Back" of the envelope */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+/* --- The Letter (Layer 1 - Inside) --- */
+.letter {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 280px;
+    height: 180px;
+    background: white;
+    padding: 20px;
+    
+    /* INITIAL STATE: Hidden behind the pocket */
+    z-index: 1; 
+    
+    /* TRANSITION LOGIC (Closing): 
+       When closing, the Z-index drops immediately, 
+       then the letter slides down quickly. */
+    transition: bottom 0.4s ease-in, z-index 0.1s;
+    
+    overflow: hidden;
+}
+
+.letter .text {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.1rem;
+    color: #444;
+    line-height: 1.6;
+}
+
+.signature {
+    margin-top: 10px;
+    text-align: right;
+    font-weight: bold;
+    color: #c0392b;
+}
+
+/* --- The Side/Bottom Flaps (Layer 2 - The Pocket) --- */
+
+.flap {
+    position: absolute;
+    width: 0;
+    height: 0;
+    z-index: 2; /* Sits ON TOP of the letter */
+}
+
+/* Left Triangle */
+.left-flap {
+    top: 0;
+    left: 0;
+    border-left: 150px solid #c0392b; /* Matches Envelope Color */
+    border-top: 100px solid transparent;
+    border-bottom: 100px solid transparent;
+}
+
+/* Right Triangle */
+.right-flap {
+    top: 0;
+    right: 0;
+    border-right: 150px solid #c0392b;
+    border-top: 100px solid transparent;
+    border-bottom: 100px solid transparent;
+}
+
+/* Bottom Triangle */
+.bottom-flap {
+    bottom: 0;
+    left: 0;
+    border-bottom: 100px solid #d6493b; /* Slightly lighter for 3D effect */
+    border-left: 150px solid transparent;
+    border-right: 150px solid transparent;
+}
+
+/* --- The Top Flap (Layer 3 - The Lid) --- */
+.top-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-top: 100px solid #e74c3c; 
+    border-left: 150px solid transparent;
+    border-right: 150px solid transparent;
+    transform-origin: top;
+    
+    /* DEFAULT STATE (CLOSING): 
+       - Wait 0.6s for the letter to slide down first.
+       - Then take 0.4s to close the flap. 
+    */
+    transition: transform 0.4s 0.6s, z-index 0.2s 0.6s;
+    
+    z-index: 5; /* Sits on top when closed */
+}
+
+/* --- The Seal --- */
+.heart-seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.5rem;
+    z-index: 6; /* On top of Top Flap */
+    transition: opacity 0.2s;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* --- OPEN STATE ANIMATIONS (The Timing Fix) --- */
+
+/* OPEN STATE: Move Immediately */
+.envelope-wrapper.open .top-flap {
+    transform: rotateX(180deg);
+    z-index: 0; /* Goes to back */
+    
+    /* When opening, do it NOW (no delay) */
+    transition: transform 0.4s, z-index 0.2s;
+}
+
+/* 2. Hide the seal (Instant) */
+.envelope-wrapper.open .heart-seal {
+    opacity: 0;
+}
+
+/* 3. Slide the letter up (WITH DELAYS) */
+.envelope-wrapper.open .letter {
+    bottom: 100px; /* Final Position */
+    
+    /* THE MAGICAL TRANSITION:
+       - bottom: Takes 0.6s to move, but WAITS 0.4s before starting (so flap clears).
+       - z-index: Waits 1s (0.4s + 0.6s) until movement is totally done, then pops to front.
+    */
+    transition: bottom 0.6s ease-out 0.4s, z-index 0.1s 1s;
+    
+    z-index: 5; /* Final Layer (On top of everything) */
+    height: auto; 
+}
+
+/* --- FINAL MOBILE FIX (Counter-Scale) --- */
+@media (max-width: 768px) {
+    /* 1. The Book: Responsive & Fluid */
+    .book {
+        /* WIDTH: Occupy 80% of the phone's width */
+        width: 80vw; 
+        
+        /* MAX-WIDTH: Stop growing if screen is huge (like a tablet) */
+        max-width: 300px;
+        
+        /* HEIGHT: Don't use pixels! Calculate height automatically based on width */
+        /* 0.7 is a standard book shape (width / height) */
+        aspect-ratio: 0.7; 
+        height: auto; 
+        
+        /* Centering & Spacing */
+        margin-top: -20px; 
+        transform: rotate(0deg) !important; 
+        z-index: 10;
+    }
+    
+    /* Resize text so it doesn't overflow the smaller book */
+    h1 { 
+        font-size: 1.8rem !important; 
+        margin-bottom: 10px;
+    }
+    
+    p { 
+        font-size: 0.8rem; 
+        line-height: 1.2;
+    }
+    
+    /* Resize the photos inside the book pages */
+    .photo-frame img, .photo-frame video {
+        height: auto; /* Let height adjust naturally */
+        max-height: 250px; /* Don't let image take up whole page */
+        object-fit: cover;
+    }
+
+    .music-btn {
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        right: auto;
+        bottom: auto;
+        padding: 8px 20px;
+        font-size: 0.9rem;
+        z-index: 20000;
+        width: max-content;
+    }
+
+    /* 2. The Envelope Wrapper */
+    /* It sits at the bottom and is scaled DOWN to 0.6 */
+    .envelope-wrapper {
+        position: absolute;
+        bottom: 20px;
+        left: 42%;
+        transform: translateX(-50%) scale(0.6); 
+        z-index: 9999;
+        transition: transform 0.3s;
+    }
+
+    .envelope-wrapper:hover {
+        transform: translateX(-50%) scale(0.6); 
+    }
+
+    /* 3. THE LETTER (Closed State) */
+    .letter {
+        position: absolute;
+        bottom: 0; /* Tucked deep inside */
+        left: 50%;
+        transform: translateX(-50%) scale(1);
+        width: 280px;
+        height: 180px;
+        
+        z-index: 1; /* Behind the pocket */
+        opacity: 0; /* Hide it so it doesn't peek out */
+        
+        /* When closing, do it fast */
+        transition: bottom 0.3s ease-in, transform 0.3s ease-in, opacity 0.1s;
+    }
+
+    /* 4. THE LETTER (Open State - The Zoom) */
+    .envelope-wrapper.open .letter {
+        /* VISIBILITY */
+        opacity: 1;
+        z-index: 20000; /* Highest layer */
+        
+        /* POSITION: Move to the optical center of the screen */
+        /* Since the envelope is at the bottom, moving up 60vh puts it in the middle */
+        bottom: 60vh; 
+        
+        /* SIZE: Scale up by 2x to fight the 0.6 envelope scale */
+        transform: translateX(-50%) scale(2); 
+        
+        /* STYLE: Make it look like a popup */
+        height: auto;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 1000px rgba(0,0,0,0.7); /* Dark Overlay */
+        
+        /* ANIMATION SEQUENCE */
+        transition: 
+            opacity 0.1s 0.4s,           /* 1. Appear after flap opens */
+            bottom 0.8s ease-out 0.4s,   /* 2. Slide UP to center */
+            transform 0.8s ease-out 0.4s, /* 3. Grow BIG while sliding */
+            z-index 0.1s 0.4s;
+    }
+
+    /* 5. Hide Clutter */
+    .scattered-photo, .candle-container {
+        display: none; 
+    }
+}
